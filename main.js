@@ -11,7 +11,7 @@ const sleep = (t) => {
     console.log("done")
   })
 }
-const getThing = () => window.location.hash.substring(1, 65)
+const getThing = () => window.location.search.substring(1, 65)
 
 const getUrl = async () => {
   let res = await fetch("https://source.unsplash.com/random/1600x900?" + getThing())
@@ -57,8 +57,7 @@ if (getThing() == "") {
   document.getElementsByTagName("form")[0].addEventListener("submit", (e) => {
     e.preventDefault();
     console.log(document.getElementsByTagName("input")[0].value);
-    this.location.hash = "#" + document.getElementsByTagName("input")[0].value
-    initPics()
+    this.location.search = "?" + document.getElementsByTagName("input")[0].value
   })
 } else {
   initPics()

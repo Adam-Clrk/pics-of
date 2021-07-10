@@ -31,7 +31,7 @@ const addNewSection = async () => {
 }
 const addNewSections = async () => {
   await addNewSection()
-  while (main.scrollTop >= main.scrollTopMax - (window.innerHeight / 10)) {
+  while (main.scrollTop >= (main.scrollHeight - window.innerHeight) - (window.innerHeight / 10)) {
     // await sleep(delay) // rate limiting lol
     await addNewSection()
   }
@@ -43,7 +43,7 @@ const initPics = () => {
   readyToLoad = true
   main.textContent = '' // clear children
   main.addEventListener("scroll", (e) => {
-    if (readyToLoad && main.scrollTop >= main.scrollTopMax - (window.innerHeight / 2)) {
+    if (readyToLoad && main.scrollTop >= (main.scrollHeight - window.innerHeight) - (window.innerHeight / 2)) {
       readyToLoad = false
       addNewSections();
     }

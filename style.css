@@ -1,0 +1,46 @@
+html, body {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+input {
+  border: none;
+  background: none;
+  box-shadow: none;
+}
+
+
+body {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+}
+main {
+  height: 100vh;
+  width: 100vw;
+  overflow-y: scroll;
+  overflow-x: visible;
+  scroll-snap-type: y mandatory;
+}
+
+input {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  font-size: 10rem;
+  text-align: center;
+}
+
+section {
+  height: 100vh;
+  scroll-snap-align: start;
+}
+
+section img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

@@ -11,24 +11,84 @@ const sleep = (t) => {
     console.log("done")
   })
 }
+
+const elem = (tagName, children) => {
+  let out = document.createElement(tagName)
+  if (children !== undefined) {
+    for (var child of children) {
+      if (!(child instanceof HTMLElement)) {
+        child = elem(child)
+      }
+      out.appendChild(child)
+    }
+  }
+  return out
+}
+
+
 const getThing = () => window.location.search.substring(1, 65)
 
-const getUrl = async () => {
-  let res = await fetch("https://source.unsplash.com/random/1600x900?" + getThing())
-  // console.log(res)
-  let img = await res.blob()
-  let bloburl = URL.createObjectURL(img)
-  return bloburl
+class Queue {
+  constructor() {
+    this._queue = []
+  }
+  enqueue(item) {
+    this._queue.push(item)
+  }
+  dequeue() {
+    return this._queue.shift()
+  }
+  peek() {
+    return this._queue.at(-1)
+  }
+  get length() {
+    return this._queue.length;
+  }
 }
+class AsyncQueue extends Queue {
+  constructor(minBuffer) {
+    super()
+    this._minBuffer = minBuffer
+  }
+  enqueue(item) {
+    this._queue.push(item)
+  }
+  dequeue() {
+    return new Promise((resolve, reject) => {
+      while (this.length < this._minBuffer) {
+        this.enqueue(this.getNewItem())
+      }
+      console.log(super.dequeue)
+      var elem = super.dequeue()
+      elem.then(resolve)
+    })
+
+  }
+}
+
+class ImageQueue extends AsyncQueue {
+  constructor(minBuffer, searchTerm) {
+    super(minBuffer)
+    this._searchTerm = searchTerm
+  }
+  async getNewItem() {
+    let res = await fetch("https://source.unsplash.com/random/1600x900?" + this._searchTerm)
+    let img = await res.blob()
+    let bloburl = URL.createObjectURL(img)
+    return bloburl
+  }
+}
+
+const imageQueue = new ImageQueue(1, getThing())
+
 const addNewSection = async () => {
-  let section = document.createElement("section")
-  let img = document.createElement("img")
-  // img.src = "https://source.unsplash.com/random/1600x900?Dog"
-  let bloburl = await getUrl()
-  img.src = bloburl
-  section.appendChild(img)
+  let section = elem("section", ["img"])
   main.appendChild(section)
+
+  let blobUrl = await imageQueue.dequeue()
+  section.querySelector("img").src = blobUrl
 }
+
 const addNewSections = async () => {
   await addNewSection()
   while (main.scrollTop >= (main.scrollHeight - window.innerHeight) - (window.innerHeight / 10)) {
